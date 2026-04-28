@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @Builder
 public class UserDetailResponse {
-    private String id;
+    private Long id;
     private String email;
     private String username;
     private List<String> roles;

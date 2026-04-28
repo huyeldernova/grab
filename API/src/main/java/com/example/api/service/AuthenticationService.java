@@ -61,6 +61,5 @@ public class AuthenticationService {
                 .build();
 
         redisTokenRepository.save(redisToken);
-        log.info("Token saved to redis: {}", accessToken);
-    }
+        log.info("Token blacklisted in Redis: jwtId={}, ttl={}ms", jwtId, diff);    }
 }

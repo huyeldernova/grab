@@ -1,6 +1,7 @@
 package com.example.api.service;
 
 
+import com.example.api.common.UserStatus;
 import com.example.api.dto.request.CreateUserRequest;
 import com.example.api.dto.response.CreateUserResponse;
 import com.example.api.dto.response.UserDetailResponse;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.api.common.AppConstant.USER_ROLE;
+import static com.example.api.common.AppConstant.CUSTOMER_ROLE;
 
 
 @Service
@@ -32,22 +33,25 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public CreateUserResponse createUser(CreateUserRequest request) {
-        if(userRepository.existsByEmail(request.getEmail())){
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .status(UserStatus.INACTIVE)
                 .build();
 
-        Role role = roleRepository.findByName(USER_ROLE)
-                .orElseGet(() -> roleRepository.save(Role.builder()
-                        .name(USER_ROLE)
-                        .build()));
-        user.addRole(role);
+
+        Role customerRole = roleRepository.findByName(CUSTOMER_ROLE)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Role CUSTOMER not found in database. Did V2 migration run correctly?"));
+
+        user.addRole(customerRole);
 
         userRepository.save(user);
 
