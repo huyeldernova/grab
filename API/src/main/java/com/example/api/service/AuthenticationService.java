@@ -6,7 +6,7 @@ import com.example.api.dto.response.LoginResponse;
 import com.example.api.dto.token.TokenPayload;
 import com.example.api.entity.RedisToken;
 import com.example.api.entity.User;
-import com.example.api.repository.RedisTokenRepository;
+import com.example.api.repository.redis.RedisTokenRepository;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

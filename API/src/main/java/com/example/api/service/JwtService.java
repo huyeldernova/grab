@@ -7,7 +7,7 @@ import com.example.api.dto.token.TokenPayload;
 import com.example.api.entity.RedisToken;
 import com.example.api.exception.AppException;
 import com.example.api.exception.ErrorCode;
-import com.example.api.repository.RedisTokenRepository;
+import com.example.api.repository.redis.RedisTokenRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
