@@ -27,7 +27,19 @@ public enum ErrorCode {
     FILE_TOO_LARGE(400, "File size exceeds maximum allowed size", HttpStatus.BAD_REQUEST),
     INVALID_FILE_TYPE(400, "File type not supported. Only image and video allowed", HttpStatus.BAD_REQUEST),
     FILE_UPLOAD_FAILED(500, "Failed to upload file to S3", HttpStatus.INTERNAL_SERVER_ERROR),
-    FILE_NOT_FOUND(404, "File not found", HttpStatus.NOT_FOUND);
+    FILE_NOT_FOUND(404, "File not found", HttpStatus.NOT_FOUND),
+
+    OTP_EXPIRED(400, "OTP expired or not found", HttpStatus.BAD_REQUEST),
+    OTP_INVALID(400, "OTP is incorrect", HttpStatus.BAD_REQUEST),
+    OTP_LOCKED(429, "Too many wrong attempts. Try again after 15 minutes", HttpStatus.TOO_MANY_REQUESTS),
+    OTP_RESEND_TOO_FAST(429, "Please wait 60 seconds before resending", HttpStatus.TOO_MANY_REQUESTS),
+    OTP_RESEND_LIMIT_EXCEEDED(429, "OTP resend limit exceeded. Try again later", HttpStatus.TOO_MANY_REQUESTS),
+
+    USER_ALREADY_ACTIVE(400, "Email already verified", HttpStatus.BAD_REQUEST),
+    PROFILE_NOT_FOUND(400, "Profile not found", HttpStatus.NOT_FOUND),
+    PLACE_NOT_FOUND(400, "Place not found", HttpStatus.NOT_FOUND)
+
+            ;
 
 
     private final int code;

@@ -2,7 +2,7 @@ package com.example.api.service;
 
 import com.example.api.exception.AppException;
 import com.example.api.exception.ErrorCode;
-import com.example.api.repository.UserRepository;
+import com.example.api.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;

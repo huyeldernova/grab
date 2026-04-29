@@ -1,17 +1,29 @@
 package com.example.api.dto.response;
+
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
-public class UserDetailResponse {
-    private Long id;
-    private String email;
-    private String username;
-    private List<String> roles;
-}
+public class UserProfileResponse {
 
+    private Long id;
+
+    private String email;
+
+    private String username;
+
+    private String  phone;
+
+    private String status;
+
+    private List<String> roles;
+
+    private boolean emailVerified;
+
+    private LocalDateTime createdAt;
+}
