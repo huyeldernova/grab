@@ -5,6 +5,7 @@ import com.example.api.common.UserStatus;
 import com.example.api.dto.request.CreateUserRequest;
 import com.example.api.dto.response.CreateUserResponse;
 import com.example.api.dto.response.UserDetailResponse;
+import com.example.api.dto.response.UserProfileResponse;
 import com.example.api.entity.Role;
 import com.example.api.entity.User;
 import com.example.api.exception.AppException;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.api.common.AppConstant.CUSTOMER_ROLE;
@@ -61,7 +63,30 @@ public class UserService {
                 .build();
     }
 
-    public List<UserDetailResponse> getUserLikeByEmailOrUsername(String emailOrUsername){
+    public UserProfileResponse getMe(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        List<String> roles = user.getUserHasRoles().stream()
+                .map(u -> u.getRole().getName())
+                .toList();
+
+        UserProfileResponse response = UserProfileResponse.builder()
+                .id(userId)
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .phone(user.getPhone())
+                .status(String.valueOf(user.getStatus()))
+                .emailVerified(user.getEmailVerifiedAt() != null)
+                .roles(roles)
+                .createdAt(user.getCreatedAt())
+                .build();
+
+        return response;
+    }
+
+    public List<UserProfileResponse> getUserLikeByEmailOrUsername(String emailOrUsername){
         var users = userRepository.searchByEmailOrUsername(emailOrUsername);
 
         return users.stream().map(u -> {
@@ -69,7 +94,7 @@ public class UserService {
                     .map(ur -> ur.getRole().getName())
                     .toList();
 
-            return UserDetailResponse.builder()
+            return UserProfileResponse.builder()
                     .id(u.getId())
                     .username(u.getUsername())
                     .email(u.getEmail())
