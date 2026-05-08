@@ -63,6 +63,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public UserProfileResponse getMe(Long userId) {
 
         User user = userRepository.findById(userId)

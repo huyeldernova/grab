@@ -2,48 +2,46 @@ package com.example.api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.Persistable;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+
 @Entity
-@Table(name = "customer_profiles")
+@Table(name = "driver_profiles")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class CustomerProfile implements Persistable<Long> {
+public class DriverProfile {
 
     @Id
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 
-    @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 
-    @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
+    @Column(nullable = false)
+    private BigDecimal rating;
 
-    @Column(length = 10)
-    private String gender;
+    @Builder.Default
+    private boolean isOnline = false;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    private BigDecimal currentLat;
+
+    private BigDecimal currentLng;
+
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
-
-
 
     @PrePersist
     protected void onCreate() {
@@ -57,14 +55,7 @@ public class CustomerProfile implements Persistable<Long> {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Override
-    public boolean isNew() {
-        return this.createdAt == null;
-    }
 
-    @Override
-    public Long getId() {
-        return this.id;
-    }
+
 
 }

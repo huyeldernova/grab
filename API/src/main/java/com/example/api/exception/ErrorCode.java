@@ -37,9 +37,13 @@ public enum ErrorCode {
 
     USER_ALREADY_ACTIVE(400, "Email already verified", HttpStatus.BAD_REQUEST),
     PROFILE_NOT_FOUND(400, "Profile not found", HttpStatus.NOT_FOUND),
-    PLACE_NOT_FOUND(400, "Place not found", HttpStatus.NOT_FOUND)
+    PLACE_NOT_FOUND(400, "Place not found", HttpStatus.NOT_FOUND),
 
-            ;
+    RIDE_REQUEST_NOT_FOUND(404, "Ride request not found", HttpStatus.NOT_FOUND),
+    RIDE_NOT_FOUND(404, "Ride not found", HttpStatus.NOT_FOUND),
+    RIDE_REQUEST_NOT_AVAILABLE(400, "Ride request is no longer available", HttpStatus.BAD_REQUEST),
+    INVALID_RIDE_STATUS_TRANSITION(400, "Invalid ride status transition", HttpStatus.BAD_REQUEST),
+    ;
 
 
     private final int code;
