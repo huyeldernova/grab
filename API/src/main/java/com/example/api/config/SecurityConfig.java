@@ -1,6 +1,5 @@
 package com.example.api.config;
 
-
 import com.example.api.service.UserDetailServiceCustomizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +28,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity  // bật @PreAuthorize trên Controller
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -38,33 +37,42 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtDecoderConfiguration jwtDecoder;
 
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .csrf(AbstractHttpConfigurer::disable)
+
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
                 .authorizeHttpRequests(auth -> auth
-                        // ── public ────────────────────────────────────
-                        .requestMatchers("/api/v1/auth/**").permitAll()           // login, logout
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll() // register
+
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+
+                        // Public: WebSocket endpoint — auth xử lý trong WsClientInboundAuth
+                        // Không permit ở đây thì Spring Security chặn trước khi vào STOMP
+                        .requestMatchers("/ws/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
 
+                // Dùng JWT làm cơ chế xác thực (OAuth2 Resource Server)
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
-                                .decoder(jwtDecoder)
-                                .jwtAuthenticationConverter(converter())
+                                .decoder(jwtDecoder)          // custom decoder — verify + blacklist check
+                                .jwtAuthenticationConverter(converter()) // map "authorities" claim → roles
                         )
                 )
 
+                // Custom error responses
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 401
-                        .accessDeniedHandler(jwtAccessDeniedHandler)           // 403
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
                 );
 
         return http.build();
@@ -93,12 +101,13 @@ public class SecurityConfig {
         return new ProviderManager(authenticationProvider);
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // CORS config — chỉ cho phép FE dev servers
+    // Production: thay bằng domain thật
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
@@ -113,12 +122,11 @@ public class SecurityConfig {
 
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+        configuration.setMaxAge(3600L); // cache preflight 1 giờ
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
-
 }
