@@ -30,7 +30,13 @@ public class CustomerProfileService {
     public CustomerProfileResponse getProfile(Long userId) {
 
         CustomerProfile profile = customerProfileRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
+                .orElseGet(() -> {
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                    return customerProfileRepository.save(
+                            CustomerProfile.builder().id(userId).user(user).build()
+                    );
+                });
 
         CustomerProfileResponse reponse = CustomerProfileResponse.builder()
                 .userId(userId)
@@ -71,7 +77,18 @@ public class CustomerProfileService {
     public SavedPlaceResponse createSavedPlace(Long userId, SavedPlaceRequest request) {
 
         CustomerProfile profile = customerProfileRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
+                .orElseGet(() -> {
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+                    CustomerProfile newProfile = CustomerProfile.builder()
+                            .id(userId)
+                            .user(user)
+                            .fullName(user.getUsername() != null ? user.getUsername() : "")
+                            .build();
+
+                    return customerProfileRepository.save(newProfile);
+                });
 
         if(request.isDefault()){
             savedPlaceRepository.resetDefaultByUserId(userId);
