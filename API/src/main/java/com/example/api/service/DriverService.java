@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -40,6 +42,8 @@ public class DriverService {
                 driverId.toString()
         );
 
+        driverProfileRepository.updateLocation(driverId, BigDecimal.valueOf(lat), BigDecimal.valueOf(lng));
+
         // TODO 3: log vị trí mới
         log.info("Driver {} location updated: lat={}, lng={}", driverId, lat, lng);
     }
@@ -65,6 +69,8 @@ public class DriverService {
                 .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
         // TODO 7: set isOnline = false, save
         profile.setOnline(false);
+        profile.setCurrentLat(null);
+        profile.setCurrentLng(null);
         driverProfileRepository.save(profile);
         // TODO 8: xóa vị trí khỏi Redis GEO
         //         opsForGeo().remove(GEO_KEY, driverId.toString())

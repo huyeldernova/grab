@@ -44,4 +44,41 @@ public class MailService {
                 </div>
                 """.formatted(otp);
     }
+
+    public void sendApprovalEmail(String to) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(to);
+            helper.setSubject("[Super App] Đơn đăng ký tài xế đã được duyệt");
+            helper.setText("""
+            <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;">
+                <h2>Chúc mừng! Đơn đăng ký tài xế của bạn đã được duyệt.</h2>
+                <p>Bạn có thể đăng nhập và bắt đầu nhận chuyến ngay bây giờ.</p>
+            </div>
+        """, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            log.error("Failed to send approval email to {}: {}", to, e.getMessage());
+        }
+    }
+
+    public void sendRejectionEmail(String to, String reason) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(to);
+            helper.setSubject("[Super App] Đơn đăng ký tài xế không được duyệt");
+            helper.setText("""
+            <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;">
+                <h2>Đơn đăng ký tài xế của bạn không được duyệt.</h2>
+                <p>Lý do: <strong>%s</strong></p>
+                <p>Bạn có thể nộp đơn lại sau khi khắc phục vấn đề.</p>
+            </div>
+        """.formatted(reason), true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            log.error("Failed to send rejection email to {}: {}", to, e.getMessage());
+        }
+    }
 }

@@ -105,6 +105,14 @@ public class RideService {
         // Load request — nếu không còn SEARCHING thì dừng
         RideRequest request = rideRequestRepository.findById(requestId)
                 .orElseThrow(() -> new AppException(ErrorCode.RIDE_REQUEST_NOT_FOUND));
+
+        if (LocalDateTime.now().isAfter(request.getExpiredAt())) {
+            request.setStatus(RideStatus.EXPIRED);
+            rideRequestRepository.save(request);
+            log.info("Request {} expired at {}", requestId, request.getExpiredAt());
+            return;
+        }
+
         if (request.getStatus() != RideStatus.SEARCHING) return;
 
         // Query Redis GEO — tìm tối đa 10 driver trong bán kính, gần nhất trước
@@ -290,6 +298,20 @@ public class RideService {
         // Notify customer biết chuyến đã bị huỷ
         rideWebSocketService.notifyCustomerStatusUpdate(
                 ride.getCustomer().getId(), ride.getId(), RideStatus.CANCELLED.name());
+    }
+
+    public List<RideResponse> getCustomerHistory(Long customerId) {
+        return rideRepository.findByCustomerIdOrderByCreatedAtDesc(customerId)
+                .stream()
+                .map(this::mapToRideResponse)
+                .toList();
+    }
+
+    public List<RideResponse> getDriverHistory(Long driverId) {
+        return rideRepository.findByDriverIdOrderByCreatedAtDesc(driverId)
+                .stream()
+                .map(this::mapToRideResponse)
+                .toList();
     }
 
     // ──────────────────────────────────────────────────────────

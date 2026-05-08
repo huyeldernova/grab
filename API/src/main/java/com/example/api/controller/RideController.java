@@ -14,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/rides")
 @RequiredArgsConstructor
@@ -79,6 +81,32 @@ public class RideController {
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)
                 .message("Ride cancelled")
+                .build());
+    }
+
+    // Customer xem lịch sử chuyến
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<List<RideResponse>>> getCustomerHistory(
+            @AuthenticationPrincipal Jwt jwt) {
+        Long customerId = Long.parseLong(jwt.getSubject());
+        return ResponseEntity.ok(ApiResponse.<List<RideResponse>>builder()
+                .code(200)
+                .message("Ride history retrieved")
+                .data(rideService.getCustomerHistory(customerId))
+                .build());
+    }
+
+    // Driver xem lịch sử chuyến
+    @PreAuthorize("hasAuthority('DRIVER')")
+    @GetMapping("/driver/history")
+    public ResponseEntity<ApiResponse<List<RideResponse>>> getDriverHistory(
+            @AuthenticationPrincipal Jwt jwt) {
+        Long driverId = Long.parseLong(jwt.getSubject());
+        return ResponseEntity.ok(ApiResponse.<List<RideResponse>>builder()
+                .code(200)
+                .message("Ride history retrieved")
+                .data(rideService.getDriverHistory(driverId))
                 .build());
     }
 }
