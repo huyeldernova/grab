@@ -19,10 +19,19 @@ spring:
     baseline-on-migrate: false
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 jwt:
-  secret-key: ${JWT_SECRET:dev-only-change-me-in-production-this-is-not-a-real-secret-key-for-grab-clone-project-2026}
+  secret-key: ${JWT_SECRET}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
 
 logging:
   level:

@@ -52,6 +52,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
+                        .requestMatchers("/actuator/health").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
 
                         // Public: WebSocket endpoint — auth xử lý trong WsClientInboundAuth
@@ -113,7 +115,9 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "https://www.mysupperapp.com",
+                "https://mysupperapp.com"
         ));
 
         configuration.setAllowedMethods(Arrays.asList(
