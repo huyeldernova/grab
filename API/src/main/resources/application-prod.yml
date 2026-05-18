@@ -24,3 +24,11 @@ spring:
 
   jpa:
     show-sql: false
+
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+    region: ${AWS_REGION}
+    bucket-name: ${AWS_BUCKET_NAME}
+    max-size: ${AWS_MAX_SIZE:20971520}
