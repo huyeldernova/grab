@@ -1,8 +1,8 @@
 package com.example.api.dto.request;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
@@ -15,6 +15,6 @@ public class CreateUserRequest {
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Min(value = 6, message = "Password must be at least 6 characters")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 }

@@ -5,6 +5,11 @@ on:
     branches:
       - main
       - master
+
+  pull_request:
+    branches:
+      - main
+
 jobs:
   ci-pipeline:
     runs-on: ubuntu-latest
