@@ -47,6 +47,7 @@ public enum ErrorCode {
     DRIVER_APPLICATION_ALREADY_EXISTS(400, "You already have a pending application", HttpStatus.BAD_REQUEST),
     DRIVER_APPLICATION_NOT_FOUND(404, "Driver application not found", HttpStatus.NOT_FOUND),
     DRIVER_APPLICATION_NOT_PENDING(400, "Application is not in PENDING status", HttpStatus.BAD_REQUEST),
+
     ;
 
 
