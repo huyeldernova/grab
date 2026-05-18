@@ -45,7 +45,7 @@ jobs:
           context: ./API
           file: ./API/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/grab-backend:${{ github.sha }}
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/grab-backend:${{ github.sha }}
 
 
 
