@@ -1,0 +1,29 @@
+name: CI
+run-name: ${{ github.actor }} is ci out GitHub Actions 🚀
+on:
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '1'
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Build Maven
+        run: mvn clean package -DskipTests
+
+
+
+
