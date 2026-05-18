@@ -27,6 +27,7 @@ jobs:
           java-version: '21'
 
       - name: Build Maven
+        working-directory: API
         run: mvn clean package -DskipTests
 
 
