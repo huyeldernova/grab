@@ -1,0 +1,1 @@
+ALTER TABLE files ALTER COLUMN target_type DROP NOT NULL;
